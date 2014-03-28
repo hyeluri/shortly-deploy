@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
+var path = process.env.MONGODB ||'mongodb://localhost/shorty';
 
-mongoose.connect('mongodb://localhost/shorty', function(err){
+mongoose.connect(path, function(err){
 
 });

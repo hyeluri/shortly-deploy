@@ -2,6 +2,7 @@ require('./../mongDb'); //our db file
 var mongoose = require('mongoose'); //library file
 var bcrypt = require('bcrypt-nodejs');
 var Promise = require('bluebird');
+bcrypt = Promise.promisifyAll(bcrypt);
 
 var userSchema = mongoose.Schema({
   username: String,
@@ -10,17 +11,27 @@ var userSchema = mongoose.Schema({
 });
 
 userSchema.pre("save", function(done){
-    var cipher = Promise.promisify(bcrypt.hash);
-    // shasum.update(this.url);
-    // this.code = shasum.digest('hex').slice(0, 5);
-    return cipher(this.get('password'), null, null).bind(this)
+     //var cipher = Promise.promisify(bcrypt.hash);
+    bcrypt.hashAsync(this.password, null, null).bind(this)
       .then(function(hash) {
         this.password = hash;
+        console.log("Hash",hash);
+        done(); 
       });
-    done();
-});
-var User = mongoose.model('User', userSchema);
 
+});
+
+userSchema.methods.comparePassword = function(attemptedPassword,callback){
+  console.log("compare account");
+
+    bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
+      console.log("match",isMatch);
+      callback(isMatch);
+    });
+};
+
+
+var User = mongoose.model('User', userSchema);
 
 
 module.exports =  User;
