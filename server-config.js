@@ -30,6 +30,5 @@ app.get('/signup', handler.signupUserForm);
 app.post('/signup', handler.signupUser);
 
 app.get('/*', handler.navToLink);
-// app.get('/*', handler.saveLink);
 
 module.exports = app;
